@@ -1,0 +1,23 @@
+nsew	224
+s	225
+e	226
+n	227
+w	228
+
+se	229
+ns	230
+sw	231
+
+ew	232
+ne	233
+nw	234
+
+sew	235
+new	236
+nse	237
+nsw	238
+
+solid 239
+
+240 glove
+241 boot

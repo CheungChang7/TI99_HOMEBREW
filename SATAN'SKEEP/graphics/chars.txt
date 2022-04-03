@@ -1,0 +1,84 @@
+ 	13
+128 castle block  129 inv block
+130 brick	  131 inv brick
+132 stone	  133 inv stone
+134 cracked	  135 pit
+	14
+136 top door lkd  137 bot door lkd
+138 left door lkd 139 rgt door lkd
+140 ns bridge lef 141 ew bridge rgt
+142 na bridge bot 143 ew bridge bot
+	15
+144 big block	  145 column
+146 stairs up	  147 stairs down
+	16
+152 open top door 153 open bot door
+154 open rgt door 155 open lft door
+	17
+160 grass1	  161 grass 2
+162 ew path top	  163 ew path bot
+164 ns path left  165 ns path right
+166 crossroads    167 marker
+	18
+168 bush1	  169 bush2
+170 bush3	  171 blank
+	19
+176 ns stream l	  177 ns stream r
+178 ew stream t	  179 ew stream b
+180 step s1tone 1  181 step stone 2
+	20
+184 glove	  185 boot
+186 shirt	  187 helmet
+188 shield	  189 bow
+190 arrow	  191 sack
+	21
+192 gauntlet	  193 boot
+194 armour	  195 helmet
+196 shield	  197 axe
+198 shovel	  199 sword
+	22
+200 key		  201 ring
+202 crown	  203 chalice
+204 big gold	  205 small gold
+206 flute	  207 horn
+	25 map
+224 nsew	  225 s
+226 e		  227 n
+228 w		  229 se
+230 ns		  231 sw
+	26 map4
+232 ew		  233 ne
+234 nw		  235 sew
+236 new		  237 nse
+238 nsw		  239 solid
+	27 display items 1
+240 glove	  241 boot
+242 shirt	  243 helmet
+244 shield	  245 bow
+246 arrow	  247 sack
+	28 display items 2
+248 glove	  249 boot
+250 shirt	  251 helmet
+252 shield	  253 axe
+254 shovel	  255 sword
+	24 display treasue
+216 key		  217 ring
+218 crown	  219 chalice
+1220 LG GOLD	  221 SM GOLD
+222 FLUTE         223 HORN
+
+64,72  big heart
+65,73  small heart
+
+water
+24    set 0
+
+fire
+23    set  -1,31
+
+	monster death
+40,41,42,43,44
+
+plyer death
+48,49,50,51
+52,53,54,55

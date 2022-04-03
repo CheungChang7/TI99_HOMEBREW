@@ -1,0 +1,60 @@
+monsters
+--------
+X snake
+x bat
+X spider
+X spectre
+
+X skeleton
+X ghost
+X goblin
+X zombie
+
+X harpy
+  sorcerer
+X hydra
+  troll
+
+  demon
+  devil
+X hellhound
+  dragon
+
+Sprites use Screen 1 char sets, tiles use screen 2 charsets
+
+room tiles
+wall, wall2, floor, floor2, cracked wall, cracked floor, block, stairs
+
+player frames 24*2 = 48  sets #9-14
+
+monster frames 8 or more sets #1 & 2
+
+Projectiles set #4
+
+fire/water = 2
+
+
+
+CMT        MAP
+"Dungeon"  40 
+
+rln  FCOL BCOL
+4200  7    4
+
+rln  FCOL BCOL
+4240  8    3
+
+RCH W  H  M  C
+-47 20 20 12 3
+
+T  Door Stair
+16 16   0
+
+W  W  W
+-1 0  0
+
+H  W  Row Col CH
+10 20 1   1   96
+
+Flag
+-98
