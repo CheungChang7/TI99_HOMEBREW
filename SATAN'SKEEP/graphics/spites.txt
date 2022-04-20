@@ -1,0 +1,51 @@
+player
+------
+south
+------
+96  99
+97  100
+98  101
+
+102
+
+west
+------
+103  106
+104  107
+105  108
+
+109
+
+north
+------
+110  113
+111  114
+112  115
+
+116
+
+east
+------
+117  120
+118  121
+119  122
+
+123
+
+Monsters
+bat     1420
+snake   1460
+ghost   1620
+goblin  1720
+skeleton 1820
+zombie  1920
+spider  2220
+hydra   2320
+hound   2020
+harpy   2120
+devil   2420
+
+monster death 
+
+player death
+48
