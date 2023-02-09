@@ -1,0 +1,6 @@
+Warlords is a game written using XB256 for the TI99/4A
+Because the program is so large, game data had to be
+moved into separate files. The data files,WARDATA and
+INSTDAT, must reside on DSK1 for the game to run
+successfully. The game must be compiled to be
+playable.
