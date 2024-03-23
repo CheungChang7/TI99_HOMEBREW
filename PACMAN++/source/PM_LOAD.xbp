@@ -1,0 +1,50 @@
+[Files]
+XBtxt=C:\Users\cheun\Desktop\WORKING\PACMAN\PM_LOAD.xb
+XB=C:\Users\cheun\Desktop\WORKING\PACMAN\PM_LOAD
+SXB=C:\Users\cheun\Desktop\WORKING\PACMAN\PM_LOAD.sxb
+Merge=C:\Users\cheun\Desktop\WORKING\PACMAN\PM_LOAD-M
+VXRef=C:\Users\cheun\Desktop\WORKING\PACMAN\PM_LOAD.vxr
+CharSet=C:\Users\cheun\Desktop\WORKING\PACMAN\PM_LOAD.cset
+
+[Build]
+Token=1
+Merge=1
+
+[Param]
+LineStart=100
+LineInc=10
+LineGOSUB=20000
+LineSUB=30000
+MemBase=auto
+TiBas=0
+Verbose=2
+Format=0
+Debug=1
+
+[Lib]
+Package=LIB\XB256.xbpkg
+User=
+Standard=1
+LCLink=0
+
+[PostProc]
+Command=
+Active=0
+
+[IntLoad]
+Line0=OLD DSK4.PM_LOAD :RET.
+Auto=0
+
+[IntRun]
+Line0=RUN :S+:OEM7.:S-DSK4.PM_LOAD:S+:OEM7.:S- :RET.
+Auto=0
+
+[IntCompile]
+Line0=RUN :S+:OEM7.:S-DSK1.COMPILER:S+:OEM7.:S- :RET.
+Line1=:WAIT3.:F3.
+Line2=DSK4.PM_LOAD-M :RET.
+Line3=:RET.
+Line4=Y:RET.
+Line5=N:RET.
+Line6=Y:RET.
+Auto=0
