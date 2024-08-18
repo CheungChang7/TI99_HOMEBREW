@@ -1,0 +1,227 @@
+DSK$="DSK1" :: VALUE=1 :: GOSUB INITIALIZE :: GOSUB INTRO
+REPEAT
+    GOTDISK=1 :: GOSUB GETDISK
+UNTIL GOTDISK>0
+GOSUB WRITETX :: GOSUB WRITEFILE :: GOSUB WRITECR :: GOSUB WRITESCORE :: GOSUB WRITELV :: GOSUB COMPLETE
+END
+INTRO:
+    CALL LINK("DISPLY",24,8,"Pac-Man++ Installer") :: VALUE=4 :: GOSUB SCROLL
+    CALL LINK("DISPLY",24,8,"          Aug  2024") :: VALUE=1 :: GOSUB SCROLL
+    CALL LINK("DISPLY",24,8,"          By B.Gray") :: VALUE=2 :: GOSUB SCROLL
+    CALL LINK("DISPLY",24,8,"       PART 1      ") :: VALUE=8 :: GOSUB SCROLL :: RETURN
+GETDISK:
+    CALL LINK("DISPLY",20,1,"Enter DSK drive to write(1-8):")
+    REPEAT
+        CALL KEY(0,K,S)
+    UNTIL S=-1 AND K>48 AND K<58
+    CALL HCHAR(20,31,K) :: DSK$="DSK"&CHR$(K) :: ON ERROR NO_DISK
+    F$=DSK$&".PD" :: SS$=DSK$&".PS" :: L$=DSK$&".LV" :: T$=DSK$&".TX" :: Z$=DSK$&".RT"
+    OPEN #1:F$,OUTPUT :: OPEN #3:T$,OUTPUT :: OPEN #2:Z$,OUTPUT :: RETURN
+NO_DISK:
+    CALL SOUND(200,110,10,130,10) :: CALL LINK("DISPLY",22,1,"Failed to access Disk: "&DSK$)
+    CALL LINK("DISPLY",23,2,"Please Enter Valid Drive") :: CALL HCHAR(20,30,32) :: GOT_DISK=0 :: ON ERROR GETBACK
+    CLOSE #1 :: CALL LINK("DELAY",3000) :: RETURN
+GETBACK:
+    CALL LINK("DISPLY",24,1,"ERROR CLOSING FILE") :: RETURN
+INITIALIZE:
+    CALL CLEAR :: CALL LINK("SCRN2") :: CALL LINK("SCREEN",2)
+    CALL LINK("COLOR2",1,7,1,2,7,1,3,7,1,4,7,1,5,7,1) :: CALL LINK("COLOR2",6,7,1,7,7,1,8,7,1,9,7,1,10,7,1)
+    CALL LINK("COLOR2",11,7,1,12,7,1) :: RETURN
+SCROLL:
+    FOR I=1 TO VALUE :: CALL LINK("DELAY",200) :: CALL LINK("SCRLUP",1) :: NEXT I :: RETURN
+WRITEFILE:
+    RESTORE MAZES :: GOSUB CLRLNS :: CALL LINK("DISPLY",22,1,"WRITING MAZE DATA FILE...")
+    FOR M=1 TO 10 :: CALL LINK("DISPLY",23,1,"WRITING MAZE "&STR$(M))
+        REPEAT
+            READ V :: IF V>=0 THEN PRINT #2:V
+        UNTIL V<0
+        FOR I=1 TO 24 :: READ Q$ :: PRINT #1:Q$ :: NEXT I :: CALL SOUND(100,3136,29)
+    NEXT M :: CALL LINK("DISPLY",24,1,"MAZE DATA WRITTEN!") :: CLOSE #2 :: RETURN
+WRITETX:
+        ON ERROR
+        TEXT$="" :: GOSUB CLRLNS :: CALL LINK("DISPLY",22,1,"WRITING TEXT DATA FILE...")
+        RESTORE TXT :: FOR I=25 TO 59 :: READ TEXT$ :: PRINT #3:TEXT$ :: NEXT I
+        CALL LINK("DISPLY",24,1,"TEXT DATA WRITTEN!") :: DISK=3 :: GOSUB CLOSEDISK :: RETURN
+WRITECR:
+        RESTORE CREDIT :: GOSUB CLRLNS :: CALL LINK("DISPLY",22,1,"WRITING CREDITS DATA...")
+        FOR I=1 TO 48 :: READ S$ :: PRINT #1:S$ :: NEXT I ::
+        CALL LINK("DISPLY",24,1,"CREDITS DATA WRITTEN!") :: DISK=1 :: GOSUB CLOSEDISK :: RETURN
+WRITESCORE:
+           OPEN #2:SS$,OUTPUT :: GOSUB CLRLNS :: CALL LINK("DISPLY",22,1,"WRITING HIGH SCORES FILE...")
+           PRINT #2:"PAC" :: PRINT #2:999 :: PRINT #2:"MAN" :: PRINT #2:900 :: PRINT #2:"PLS" :: PRINT #2:800
+           PRINT #2:"BRG" :: PRINT #2:700 :: PRINT #2:"AUG" :: PRINT #2:600 :: PRINT #2:" 24" :: PRINT #2:500
+           PRINT #2:"TEX" :: PRINT #2:400 :: PRINT #2:"INS" :: PRINT #2:300 :: PRINT #2:"HME" :: PRINT #2:200
+           PRINT #2:"CMP" :: PRINT #2:100
+           CALL LINK("DISPLY",24,1,"SCORES WRITTEN!") :: DISK=2 :: GOSUB CLOSEDISK :: RETURN
+COMPLETE:
+    GOSUB CLRLNS :: CALL LINK("DISPLY",20,3,"DATA WRITTEN TO FILE ON "&DSK$) :: CALL LINK("DISPLY",22,3,"RUN PACMAN INSTALL PART 2") :: CALL LINK("DELAY",3000) :: RETURN
+WRITELV:
+        OPEN #1:L$,OUTPUT :: GOSUB CLRLNS :: CALL LINK("DISPLY",22,1,"WRITING LEVEL DATA FILE...")
+        RESTORE LVL :: READ G$ :: PRINT #1:G$ :: READ G$ :: PRINT #1:G$
+        FOR I=1 TO 140 :: READ V :: PRINT #1:V :: NEXT I
+        CALL LINK("DISPLY",24,1,"LEVEL DATA WRITTEN!") :: DISK=1 :: GOSUB CLOSEDISK :: RETURN
+CLRLNS:
+       CALL LINK("DELAY",3000) :: CALL HCHAR(20,1,32,160) :: RETURN
+CLOSEDISK:
+          ON ERROR ERRETURN :: CALL LINK("DELAY",1000) :: CLOSE #DISK :: RETURN
+ERRETURN:
+         RETURN
+WRERR:
+      CALL SOUND(100,110,10) :: PRINT "ERROR WRITING TO FILE" :: RETURN
+MAZES:
+DATA 12,5,202,36,65,137,129,185,145,169,161,185,177,89,161,57,145,41,161,25,145,9,129,41,9
+DATA 9,49,41,9,89,33,185,9,105,33,57,49,89,65,97,36,65,57,89,1,0,193,89,153,33,185,9,105,33
+DATA 137,49,105,65,137,113,57,129,9,145,25,161,41,145,153,161,169,145,185,129,137,65,97
+DATA 46,65,105,49,137,33,105,9,185,49,153,89,193,0,1,89,41,161,9,177,105,161,137,145
+DATA 153,129,185,145,169,161,153,129,137,113,57,129,41,9,9,49,41,33,57,49,89,65,97
+DATA 38,65,89,49,57,33,9,49,41,9,9,33,185,9,153,161,169,145,185,129,105,145,41,161
+DATA 9,177,89,161,57,145,41,89,1,0,193,89,137,65,97,-1
+DATA "faaaaaaaaaaajaaaaaaaaaaag","`!!!!!!!!!!!`!!!!!!!!!!!`","`#fag!faaag!`!faaag!fag#`","`!hai!haaai!e!haaai!hai!`"
+DATA "`!!!!!!!!!!!!!!!!!!!!!!!`","`!bac!d!baaajaaac!d!bac!`","`!!!!!`!!!!!`!!!!!`!!!!!`","haaag!kaaac e baaal!faaai"
+DATA "    `!`           `!`    ","    `!` faaaxaaag `!`    ","aaaai!e `       ` e!haaaa","     !  `       `  !     "
+DATA "aaaag!d `       ` d!faaaa","    `!` haaaaaaai `!`    ","    `!`           `!`    ","faaai!e baaajaaac e!haaag"
+DATA "`!!!!!!!!!!!`!!!!!!!!!!!`","`!bag!baaac!e!baaac!fac!`","`#!!`!!!!!!! !!!!!!!`!!#`","kac!e!d!baaajaaac!d!e!bal"
+DATA "`!!!!!`!!!!!`!!!!!`!!!!!`","`!baaamaaac!e!baaamaaac!`","`!!!!!!!!!!!!!!!!!!!!!!!`","haaaaaaaaaaaaaaaaaaaaaaai"
+DATA 8,14,214,48,65,137,129,105,161,121,145,137,161,169,177,185,145,169,129,193,0,1,129,89
+DATA 161,73,177,9,145,57,161,25,177,9,145,25,41,9,9,89,25,129,41,185,9,105,25,65,41,89,65,97
+DATA 54,65,41,41,9,9,25,25,49,41,41,65,57,129,1,0,193,129,105,161,121,145,185,177,9,145,73,161
+DATA 89,145,105,161,121,145,169,41,145,25,169,9,185,41,129,25,65,41,9,9,89,25,129,41,105,65,97
+DATA 42,65,105,41,185,9,105,25,129,41,153,65,137,129,193,0,1,129,89,161,73,145,9,177,185,145
+DATA 121,161,105,145,89,129,25,41,9,9,25,25,49,41,41,65,97,46,65,57,81,41,113,25,145,9,177
+DATA 121,145,185,177,169,161,137,145,121,161,105,129,169,41,145,25,169,9,185,41,105,65,137
+DATA 113,57,129,25,41,9,9,89,25,129,41,153,65,97,-1
+DATA "faaaaaaaaaaajaaaaaaaaaaag","`!!!!!!!!!!!`!!!!!!!!!!!`","`#d!baajaac!e!baajaac!d#`","`!`!!!!`!!!!!!!!!`!!!!`!`"
+DATA "`!haac!e!baajaac!e!baai!`","`!!!!!!!!!!!`!!!!!!!!!!!`","hag!d!faaag!`!faaag!d!fai","  `!`!haaai!e!haaai!`!`  "
+DATA "  `!`!             !`!`  ","  `!kac faaaxaaag bal!`  ","  `!`!  `       `  !`!`  ","  `!`!d `       ` d!`!`  "
+DATA "  `!`!` `       ` `!`!`  ","  `!e!` haaaaaaai `!e!`  ","  `!!!`           `!!!`  ","aai!bai baaajaaac hac!haa"
+DATA "   !!!!!!!!!`!!!!!!!!!   ","fac!baaaaag!e!faaaaac!bag","`!!!!!!!!!`! !`!!!!!!!!!`","`#faaac!d!e!d!e!d!baaag#`"
+DATA "`!`!!!!!`!!!`!!!`!!!!!`!`","`!e!baaai!bamac!haaac!e!`","`!!!!!!!!!!!!!!!!!!!!!!!`","haaaaaaaaaaaaaaaaaaaaaaai"
+DATA 4,9,236,42,65,185,9,153,33,169,49,153,65,169,97,185,177,161,161,169,113,153,81,193,0,1,81
+DATA 41,145,97,161,89,177,9,97,25,65,9,9,41,33,25,49,41,65,97,48,65,25,97,9,177,33,161,25,113
+DATA 41,81,1,0,193,81,153,145,97,161,161,177,185,97,169,65,153,49,169,33,185,9,137,25,121,49,105
+DATA 25,89,49,73,25,57,65,9,9,137,65,97,44,65,137,113,105,129,137,145,97,161,105,177,185,145,169
+DATA 113,89,129,57,145,41,113,25,161,33,177,9,97,25,81,1,0,193,81,169,65,185,9,9,33,25,49,41,65
+DATA 97,50,65,9,9,57,25,73,49,89,25,105,49,121,25,137,65,185,9,153,33,169,49,153,65,169,81,193
+DATA 0,1,81,25,97,9,177,33,161,97,145,57,129,89,113,105,129,137,145,153,113,137,65,97,-1
+DATA "faaaaaaaaaaaaaaaaaaaaaaag","`!!!!!!!!!!!!!!!!!!!!!!!`","`#fag!d!bajaaajac!d!fag#`","`!hai!`!!!`!!!`!!!`!hai!`"
+DATA "`!!!!!`!d!`!d!`!d!`!!!!!`","`!d!bal!`!e!`!e!`!kac!d!`","`!`!!!`!`!!!`!!!`!`!!!`!`","`!hac!e!haaamaaai!e!bai!`"
+DATA "`!!!!!             !!!!!`","hac!bag faaaxaaag fac!bai","   !!!` `       ` `!!!   ","fac!d!` `       ` `!d!bag"
+DATA "`!!!`!` `       ` `!`!!!`","`!fai!e haaaaaaai e!hag!`","`!`!!!             !!!`!`","`!`!d!faaac d baaag!d!`!`"
+DATA "`!`!`!`!!!!!`!!!!!`!`!`!`","`!e!`!e!baaamaaac!e!`!e!`","`!!!`!!!!!!! !!!!!!!`!!!`","`!d!haaaaaac!baaaaaai!d!`"
+DATA "`#`!!!!!!!!!!!!!!!!!!!`#`","`!hc!baaaac!d!baaaac!bi!`","`!!!!!!!!!!!`!!!!!!!!!!!`","haaaaaaaaaaamaaaaaaaaaaai"
+DATA 7,13,229,54,65,137,113,97,129,89,145,105,153,121,129,137,137,169,177,185,153,105,129,89,153,9
+DATA 177,25,153,9,121,41,105,9,89,1,0,193,89,185,73,153,57,185,9,105,33,89,9,9,57,41,73,9,89,57,65
+DATA 97,48,65,57,137,25,177,9,153,89,129,105,153,185,177,169,137,137,41,169,25,153,9,185,57,153,73
+DATA 185,89,193,0,1,89,57,41,25,25,41,9,9,57,41,73,9,89,57,113,137,65,97,44,65,137,41,169,25,153,9
+DATA 185,57,153,73,185,105,153,121,185,177,9,121,41,105,9,89,1,0,193,89,137,113,57,41,25,25,73,49
+DATA 89,33,105,49,137,113,57,65,97,48,65,57,41,25,25,41,9,9,57,41,73,9,89,1,0,193,89,185,105,153,121
+DATA 185,177,25,153,73,129,57,137,25,177,9,153,89,129,97,113,137,41,169,25,153,9,105,49,137,65,97,-1
+DATA "faaaaaaaaaaajaaaaaaaaaaag","`!!!!!!!!!!!`!!!!!!!!!!!`","`#fac!baaag!`!faaac!bag#`","`!`!!!!!!!`!e!`!!!!!!!`!`"
+DATA "`!`!baaag!`!!!`!faaac!`!`","`!`!!!!!e!e!d!e!e!!!!!`!`","`!haaag!!!!!`!!!!!faaai!`","`!!!!!` baaamaaac `!!!!!`"
+DATA "kaaac!`           `!baaal","`!!!!!` faaaxaaag `!!!!!`","e!baaai `       ` haaac!e"," !!!!!  `       `  !!!!! "
+DATA "d!baaag `       ` faaac!d","`!!!!!` haaaaaaai `!!!!!`","kaaac!`           `!baaal","`!!!!!` bajc bjac `!!!!!`"
+DATA "`!faaai!!!`!!!`!!!haaag!`","`!`!!!!!d!`!n!`!d!!!!!`!`","`!e!baaai!e! !e!haaac!e!`","`!!!!!!!!!!!d!!!!!!!!!!!`"
+DATA "`#d!faaaaaaamaaaaaaag!d#`","`!e!haaaaaaaaaaaaaaai!e!`","`!!!!!!!!!!!!!!!!!!!!!!!`","haaaaaaaaaaaaaaaaaaaaaaai"
+DATA 14,6,247,58,65,137,113,121,129,161,145,185,177,153,161,121,177,105,145,89,129,33,145,73,177
+DATA 9,89,1,0,193,89,169,25,153,9,185,49,169,73,153,9,137,49,121,9,105,49,89,9,73,49,57,9,9,49
+DATA 25,25,41,89,57,65,97,38,65,57,89,41,73,25,129,33,145,73,177,9,161,73,177,89,145,105,177,185
+DATA 161,121,145,185,9,153,129,105,145,89,129,41,89,57,113,137,65,97,58,65,137,89,153,9,185,89
+DATA 193,0,1,89,25,73,41,9,9,177,41,161,73,145,33,129,89,145,105,129,161,145,185,177,105,129,169
+DATA 25,153,9,137,49,121,9,105,49,89,9,73,49,57,9,9,89,25,73,41,89,57,65,97,36,65,57,89,41,9,9
+DATA 177,73,145,33,129,73,113,137,89,153,9,185,49,169,129,105,177,185,145,121,161,185,89,169
+DATA 129,121,113,137,65,97,-1
+DATA "faaaaaaajaaajaaajaaaaaaag","`!!!!!!!`!!!`!!!`!!!!!!!`","`#fac!d!`!d!`!d!`!d!bag#`","`!`!!!`!`!`!`!`!`!`!!!`!`"
+DATA "`!`!d!`!`!`!`!`!`!`!d!`!`","`!e!`!`!e!`!e!`!e!`!`!e!`","`!!!`!`!!!`!!!`!!!`!`!!!`","`!d!`!kaaamc bmaaal!`!d!`"
+DATA "`!`!e!`           `!e!`!`","`!`!!!` faaaxaaag `!!!`!`","i!e!d!e `       ` e!d!e!h"," !!!`!  `       `  !`!!! "
+DATA "g!d!e!d `       ` d!e!d!f","`!`!!!` haaaaaaai `!!!`!`","`!`!d!`           `!d!`!`","`!`!e!hac bajac bai!e!`!`"
+DATA "`!`!!!!!!!!!`!!!!!!!!!`!`","`!hc!baaaag!e!faaaac!bi!`","`!!!!!!!!!`! !`!!!!!!!!!`","`!baaaaac!`!d!`!baaaaac!`"
+DATA "`#!!!!!!!!`!`!`!!!!!!!!#`","`!bac!bac!e!`!e!bac!bac!`","`!!!!!!!!!!!`!!!!!!!!!!!`","haaaaaaaaaaamaaaaaaaaaaai"
+DATA 15,10,210,46,65,137,113,57,145,105,177,137,161,153,177,185,161,169,97,153,81,169,89,193
+DATA 0,1,89,25,161,9,177,41,129,25,25,9,9,41,49,25,65,73,49,57,9,137,49,73,65,97,50,65,25
+DATA 25,9,9,41,25,25,97,41,81,25,89,1,0,193,89,169,113,25,161,9,177,41,161,57,177,89,145,57,129
+DATA 137,161,153,177,185,161,169,25,153,49,169,25,185,9,153,49,169,65,97,50,65,121,49,97,33,89,25
+DATA 73,33,57,9,137,49,73,65,25,161,9,177,41,129,25,113,137,145,105,177,137,161,153,129,169,25,185
+DATA 9,153,49,169,89,193,0,1,89,25,25,41,49,25,65,97,46,65,73,49,57,9,137,49,97,65,169,25,153,9
+DATA 185,25,153,49,169,161,185,177,153,129,169,89,193,0,1,89,25,161,9,177,41,129,25,25,9,9,41,49
+DATA 25,113,137,65,97,-1
+DATA "faaaaajaaaaaaaaaaajaaaaag","`!!!!!`!!!!!!!!!!!`!!!!!`","`#bac!`!faaajaaag!`!bac#`","`!!!!!`!e!!!e!!!e!`!!!!!`"
+DATA "hag!d!`!!!d!!!d!!!`!d!fai","  `!e!`!bamc!bmac!`!e!`  ","  `!!!`!!!!!!!!!!!`!!!`  ","  `!bamac!bc!bc!bamac!`  "
+DATA "  `!!!             !!!`  ","  `!bag faaaxaaag fac!`  ","aai!!!` `       ` `!!!haa","   !n!` `       ` `!n!   "
+DATA "aag!!!` `       ` `!!!faa","  `!bai haaaaaaai hac!`  ","  `!!!             !!!`  ","  `!bag baaaaaaac fac!`  "
+DATA "  `!!!`!!!!!!!!!!!`!!!`  ","  `!d!`!baaaaaaac!`!d!`  ","  `!e!`!!!!! !!!!!`!e!`  ","fai!!!e!fag!d!fag!e!!!hag"
+DATA "`!!!d!!!` `!`!` `!!!d!!!`","`#bai!d!hai!`!hai!d!hac#`","`!!!!!`!!!!!`!!!!!`!!!!!`","haaaaamaaaaamaaaaamaaaaai"
+DATA 9,3,198,46,65,113,49,97,9,185,65,153,9,9,65,41,49,65,33,97,49,81,65,57,97,33,113,9,177,41,129
+DATA 65,177,129,129,153,177,185,113,161,89,193,0,1,89,33,81,57,65,97,42,65,57,81,33,113,41,145,9
+DATA 177,41,145,81,129,113,145,185,177,153,113,161,65,185,9,153,49,129,33,65,49,41,9,9,65,41,49
+DATA 65,33,97,49,113,65,97,38,65,137,113,113,177,129,145,153,177,185,113,161,89,193,0,1,89,33,113
+DATA 9,145,81,113,57,81,33,65,9,9,185,65,153,9,97,49,81,65,97,40,65,81,49,97,33,65,49,41,65,9,9
+DATA 153,65,161,89,193,0,1,89,33,113,9,177,41,145,81,113,137,97,161,113,153,177,185,145,113,113
+DATA 137,65,97,-1
+DATA "faaaaaaaaaaaaaaaaaaaaaaag","`!!!!!!!!!!!!!!!!!!!!!!!`","`!fag!faaaag!faaaag!fag!`","`#` `!`faaai!haaag`!` `#`"
+DATA "`!` `!``!!!!!!!!!``!` `!`","`!` `!hi!fac!bag!hi!` `!`","`!` `!!!!`!!!!!`!!!!` `!`","`!hai!faai bac haag!hai!`"
+DATA "`!!!!!`           `!!!!!`","haag!bi faaaxaaag hc!faai","aaai!!  `       `  !!haaa","    !bc `       ` bc!    "
+DATA "aaag!!  `       `  !!faaa","faai!bg haaaaaaai fc!haag","`!!!!!`           `!!!!!`","`!fag!haag bac faai!fag!`"
+DATA "`!` `!!!!`!!!!!`!!!!` `!`","`!hai!bc!e!bac!e!bc!hai!`","`!!!!!!!!!!! !!!!!!!!!!!`","`!fag!fg!d!fag!d!fg!fag!`"
+DATA "`#` `!``!`!` `!`!``!` `#`","`!hai!``!e!hai!e!``!hai!`","`!!!!!``!!!!!!!!!``!!!!!`","haaaaaihaaaaaaaaaihaaaaai"
+DATA 16,8,221,54,65,137,89,153,177,185,145,153,177,121,145,137,177,89,129,41,161,9,177,41,49,129,9
+DATA 65,25,89,49,145,9,185,41,169,73,193,0,1,73,25,33,49,9,9,41,25,33,49,49,153,89,137,113,57,65
+DATA 97,50,65,57,89,41,49,105,25,129,9,65,25,89,49,153,177,185,145,169,9,145,49,129,9,65,49,41,177
+DATA 9,145,25,9,9,41,25,113,1,0,193,113,169,145,185,177,105,129,153,89,137,65,97,40,65,57,89,41
+DATA 49,49,33,25,9,9,41,25,145,9,177,41,129,89,177,185,161,153,49,145,9,169,73,193,0,1,73,25,145,41
+DATA 177,153,89,137,65,97,46,65,137,89,153,129,105,177,153,49,145,9,169,145,185,161,153,177,9,145
+DATA 25,9,9,41,25,113,1,0,193,113,169,145,153,49,89,25,65,9,129,49,153,89,137,113,57,65,97,-1
+DATA "faaaaaajaaaaaaaaajaaaaaag","`!!!!!!`!!!!!!!!!`!!!!!!`","`!d!fg!`!baajaac!`!fg!d!`","`#`!hi!`!!!!`!!!!`!hi!`#`"
+DATA "`!e!!!!`!fg!`!fg!`!!!!e!`","`!!!fc!e!hi!e!hi!e!bg!!!`","hag!`!!!!!!!!!!!!!!!`!fai","  `!`!faaaac baaaag!`!`  "
+DATA "aai!`!`           `!`!haa","   !`!` faaaxaaag `!`!   ","aag!`!e `       ` e!`!faa","  `!`!  `       `  !`!`  "
+DATA "  `!`!d `       ` d!`!`  ","aai!`!` haaaaaaai `!`!haa","   !`!`           `!`!   ","aag!`!haaaaajaaaaai!`!faa"
+DATA "  `!`!!!!!!!`!!!!!!!`!`  ","fai!e!faaag!e!faaag!e!hag","`!!!!!`!!!`! !`!!!`!!!!!`","`!bac!`!d!`!d!`!d!`!bac!`"
+DATA "`#!!!!`!`!`!`!`!`!`!!!!#`","`!bac!e!e!e!e!e!e!e!bac!`","`!!!!!!!!!!!!!!!!!!!!!!!`","haaaaaaaaaaaaaaaaaaaaaaai"
+DATA 4,7,215,54,65,153,113,137,145,121,129,105,161,169,129,185,177,65,161,25,129,9,177,129,161,105
+DATA 145,89,129,57,145,41,129,25,89,1,0,193,89,169,49,185,9,153,33,137,49,57,25,73,9,9,49,41,33
+DATA 57,65,97,42,65,41,113,57,145,73,129,89,161,25,129,9,177,185,129,169,161,105,129,137,25,121,9
+DATA 185,49,169,89,193,0,1,89,25,49,9,9,73,25,89,49,137,65,97,48,65,137,113,153,65,137,49,105,25
+DATA 137,33,153,49,185,9,41,49,9,9,41,33,57,145,41,129,9,177,65,161,89,145,105,129,137,145,153,129
+DATA 185,177,129,161,105,145,89,129,57,65,97,42,65,57,33,41,9,9,49,25,89,1,0,193,89,169,49,185,9
+DATA 121,25,137,145,153,129,185,177,129,161,105,145,89,129,57,65,137,33,153,9,121,25,137,65,97,-1
+DATA "faaaaaaaaaaaaaaaaaaaaaaag","`!!!!!!!!!!!!!!!!!!!!!!!`","`!fag!fac!bajac!bag!fag!`","`#` `!e!!!!!`!!!!!e!` `#`"
+DATA "`!` `!!!fag!`!fag!!!` `!`","`!hai!d!hai!e!hai!d!hai!`","`!!!!!`!!!!!!!!!!!`!!!!!`","hag!fai baac baac hag!fai"
+DATA "  `!`!             !`!`  ","  `!`!d faaaxaaag d!`!`  ","aai!`!` `       ` `!`!haa","   !`!` `       ` `!`!   "
+DATA "aag!`!` `       ` `!`!faa","  `!`!e haaaaaaai e!`!`  ","  `!`!             !`!`  ","fai!hag baaajaaac fai!hag"
+DATA "`!!!!!`!!!!!`!!!!!`!!!!!`","`!d!d!e!n!d!e!d!n!e!d!d!`","`!`!`!!!!!`! !`!!!!!`!`!`","`!`!haaaaai!d!haaaaai!`!`"
+DATA "`#`!!!!!!!!!`!!!!!!!!!`#`","`!haaaac!baamaac!baaaai!`","`!!!!!!!!!!!!!!!!!!!!!!!`","haaaaaaaaaaaaaaaaaaaaaaai"
+DATA 8,15,172,40,65,153,73,169,153,185,137,169,177,193,0,1,177,25,137,9,153,25,73,41,41,65,25,25,49
+DATA 9,33,25,9,1,0,193,9,169,25,65,41,41,65,97,48,65,41,41,65,25,25,89,1,0,193,89,169,73,153,41
+DATA 129,25,169,49,185,33,169,161,153,145,105,177,153,161,169,177,193,0,1,177,25,161,41,177,89,145
+DATA 81,129,41,105,57,65,97,36,65,137,113,97,145,153,177,105,145,153,161,169,33,185,49,169,25,113
+DATA 41,81,25,169,9,193,0,1,9,25,49,9,33,25,73,41,65,97,46,65,41,73,25,153,9,137,25,161,41,177,89
+DATA 145,153,177,105,145,113,129,153,105,169,89,193,0,1,89,25,9,1,0,193,9,169,73,153,41,129,25,25
+DATA 105,57,113,137,65,97,-1
+DATA "aaaag               faaaa","    `               `    ","aag!haaaaaaaaaaaaaaai!faa","fai!!!!!!!!!!!!!!!!!!!hag"
+DATA "`!!!faac!d!bac!d!baag!!!`","`#n!`!!!!`!!!!!`!!!!`!n#`","`!!!`!faamag!famaag!`!!!`","hag!`!haaaai!haaaai!`!fai"
+DATA "  `!e!             !e!`  ","  `!!!d faaaxaaag d!!!`  ","aai!fal `       ` kag!haa","   !` ` `       ` ` `!   "
+DATA "aag!hai `       ` hai!faa","  `!!!  haaaaaaai  !!!`  ","  `!d!d           d!d!`  ","  `!`!haac d d baai!`!`  "
+DATA "fai!`!!!!!!`!`!!!!!!`!hag","`!!!kaaaac!e!e!baaaal!!!`","`#n!`!!!!!!! !!!!!!!`!n#`","`!!!e!faaag!d!faaag!e!!!`"
+DATA "hag!!!`   `!`!`   `!!!fai","aai!d!haaai!`!haaai!d!haa","    `!!!!!!!`!!!!!!!`    ","aaaamaaaaaaamaaaaaaamaaaa"
+CREDIT:
+DATA "        PACMAN^^"," ","        STARRING"," ","PACMAN     AS   HIMSELF","SHADOW     AS   BLINKY"
+DATA "SPEEDY     AS   PINKY","BASHFUL    AS   INKY","POKEY      AS   CLYDE"," ","EXECUTIVE PRODUCER NAMCO"
+DATA "WRITTEN BY  TORU IWATANI","MUSIC SHIGEICHI ISHIMURA","              TOSHIO KAI","ART DIRECTOR HIROSHI ONO"
+DATA "DIRECTED BY      BR GRAY"," ","     SPECIAL THANKS"," ","     SENIOR FALCON","         TI CODED"
+DATA "       ALEX JOHNSON","    GREGORY MCGILL","       RETROSPECT", " ", " ", " ", " ", " "
+DATA " "," "," "," "," "," "," "," "," "," "
+DATA " "," "," "," "," "," "," "," "," "," "
+TXT:
+DATA "<SHADOW", "[BLINKY[", "<SPEEDY", "[PINKY[", "<BASHFUL", "[INKY[", "<POKEY", "[CLYDE["
+DATA "PRESS 1 TO START", "PRESS 2 FOR INSTRUCTIONS", "PRESS 3 FOR HIGH SCORES", "PRESS 4 FOR CONFIGURE"
+DATA "PAC!MAN ALL<TIME HI<SCORES", "CHARACTER\NICK NAME", "GAME OVER", "PAUSE", "HISCORE", "! 10 PTS", "& 50 PTS", "&!!!"
+DATA "0000183C3C18000000183C7E7E3C18", "00183C7E7E3C18000000183C3C18", "00183C7E7E3C18"
+DATA "ERROR READING DATA FROM DISK:", "SPACE TO SELECT", "NORTH KEY", "SOUTH KEY"
+DATA "EAST  KEY", "WEST  KEY", "LIVES  ^_", "EXIT","PLAYER1","LOADING!!!","4800","5200"
+LVL:
+DATA "0000030303033F3F3F3F0303030300000000C0C0C0C0FCFCFCFCC0C0C0C","071F3F3F717171717F7F7F7F7F7F3711E0F8FCFCC6C6C6C6FEFEFEFEFEFE7612"
+DATA 152,32,9,7,70,30,4,216,30,9,10,50,20,3,160,28,9,12,40,10,3,176,26,9,4,20,5,2,153
+DATA 31,10,7,10,5,2,184,29,10,13,40,10,1,172,27,10,11,5,5,1,168,32,11,11,1,15,1,161
+DATA 30,11,12,40,10,1,169,28,11,11,1,10,1,192,26,11,16,20,5,1,193,31,12,16,10,5,1,170
+DATA 29,12,11,1,5,1,217,27,12,10,30,10,1,194,32,13,16,1,10,1,200,30,13,15,1,1,1,208,28
+DATA 13,8,30,10,1,155,26,13,7,10,5,1,195,31,14,16,1,10,1,177,29,14,4,1,1,1
+
