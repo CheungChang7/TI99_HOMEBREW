@@ -1,0 +1,50 @@
+[Files]
+XBtxt=C:\Users\cheun\Desktop\WORKING\DF\SPRTDATA.xb
+XB=C:\Users\cheun\Desktop\WORKING\DF\SPRTDATA
+SXB=C:\Users\cheun\Desktop\WORKING\DF\SPRTDATA.sxb
+Merge=C:\Users\cheun\Desktop\WORKING\DF\SPRTDATA-M
+VXRef=C:\Users\cheun\Desktop\WORKING\DF\SPRTDATA.vxr
+CharSet=C:\Users\cheun\Desktop\WORKING\DF\SPRTDATA.cset
+
+[Build]
+Token=1
+Merge=1
+
+[Param]
+LineStart=100
+LineInc=10
+LineGOSUB=20000
+LineSUB=30000
+MemBase=auto
+TiBas=0
+Verbose=2
+Format=0
+Debug=1
+
+[Lib]
+Package=
+User=
+Standard=1
+LCLink=0
+
+[PostProc]
+Command=
+Active=0
+
+[IntLoad]
+Line0=OLD DSK4.SPRTDATA :RET.
+Auto=0
+
+[IntRun]
+Line0=RUN :S+:OEM7.:S-DSK4.SPRTDATA:S+:OEM7.:S- :RET.
+Auto=0
+
+[IntCompile]
+Line0=RUN :S+:OEM7.:S-DSK1.COMPILER:S+:OEM7.:S- :RET.
+Line1=:WAIT3.:F3.
+Line2=DSK4.SPRTDATA-M :RET.
+Line3=:RET.
+Line4=Y:RET.
+Line5=N:RET.
+Line6=Y:RET.
+Auto=0
