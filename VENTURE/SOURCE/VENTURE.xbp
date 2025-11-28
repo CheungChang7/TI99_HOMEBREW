@@ -1,0 +1,60 @@
+[Files]
+XBtxt=C:\Users\cheun\Desktop\WORKING\VENTURE\VENTURE.xb
+XB=C:\Users\cheun\Desktop\WORKING\VENTURE\VENTURE
+SXB=C:\Users\cheun\Desktop\WORKING\VENTURE\VENTURE
+Merge=C:\Users\cheun\Desktop\WORKING\VENTURE\VENTURE-M
+VXRef=C:\Users\cheun\Desktop\WORKING\VENTURE\VENTURE.vxr
+CharSet=C:\Users\cheun\Desktop\WORKING\VENTURE\VENTURE.cset
+
+[Build]
+Token=1
+Merge=1
+Size=0
+
+[Param]
+LineStart=100
+LineInc=10
+LineGOSUB=20000
+LineSUB=30000
+MemBase=auto
+TiBas=0
+Verbose=3
+Format=0
+Debug=1
+
+[Lib]
+User=
+Standard=1
+LCLink=0
+Libs=
+
+[PostProc]
+Command=
+Active=0
+
+[CartPatch]
+CartDevBase=0
+CartRelBase=0
+
+[IntLoad]
+Line0=OLD DSK4.VENTURE :RET.
+Auto=0
+
+[IntRun]
+Line0=RUN :S+:OEM7.:S-DSK4.VENTURE:S+:OEM7.:S- :RET.
+Auto=0
+
+[IntCompile]
+Line0=RUN :S+:OEM7.:S-DSK1.COMPILER:S+:OEM7.:S- :RET.
+Line1=:WAIT3.:F3.
+Line2=DSK4.VENTURE-M :RET.
+Line3=:RET.
+Line4=Y:RET.
+Line5=N:RET.
+Line6=Y:RET.
+Line7=:WAITFILE. C:\Users\cheun\Desktop\WORKING\VENTURE\VENTURE.txt
+Line8=:ASSEMBLER. C:\Users\cheun\Desktop\WORKING\VENTURE\VENTURE.txt
+Line9=:RET.:WAIT1.
+Line10=N:RET.:WAIT1.:RET.:WAIT1.
+Line11=:RET.:WAIT1.:RET.
+Auto=0

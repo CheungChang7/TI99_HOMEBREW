@@ -1,0 +1,60 @@
+[Files]
+XBtxt=C:\Users\cheun\Desktop\WORKING\VENTURE\VENT_SUBS.xb
+XB=C:\Users\cheun\Desktop\WORKING\VENTURE\VENT_SUBS
+SXB=C:\Users\cheun\Desktop\WORKING\VENTURE\VENT_SUBS
+Merge=C:\Users\cheun\Desktop\WORKING\VENTURE\VENT_SUBS-M
+VXRef=C:\Users\cheun\Desktop\WORKING\VENTURE\VENT_SUBS.vxr
+CharSet=C:\Users\cheun\Desktop\WORKING\VENTURE\VENT_SUBS.cset
+
+[Build]
+Token=1
+Merge=1
+Size=0
+
+[Param]
+LineStart=100
+LineInc=10
+LineGOSUB=20000
+LineSUB=30000
+MemBase=auto
+TiBas=0
+Verbose=2
+Format=0
+Debug=1
+
+[Lib]
+User=
+Standard=1
+LCLink=0
+Libs=
+
+[PostProc]
+Command=
+Active=0
+
+[CartPatch]
+CartDevBase=0
+CartRelBase=0
+
+[IntLoad]
+Line0=OLD DSK4.VENT_SUBS :RET.
+Auto=0
+
+[IntRun]
+Line0=RUN :S+:OEM7.:S-DSK4.VENT_SUBS:S+:OEM7.:S- :RET.
+Auto=0
+
+[IntCompile]
+Line0=RUN :S+:OEM7.:S-DSK1.COMPILER:S+:OEM7.:S- :RET.
+Line1=:WAIT3.:F3.
+Line2=DSK4.VENT_SUBS-M :RET.
+Line3=:RET.
+Line4=Y:RET.
+Line5=N:RET.
+Line6=Y:RET.
+Line7=:WAITFILE. C:\Users\cheun\Desktop\WORKING\VENTURE\VENT_SUBS.txt
+Line8=:ASSEMBLER. C:\Users\cheun\Desktop\WORKING\VENTURE\VENT_SUBS.txt
+Line9=:RET.:WAIT1.
+Line10=N:RET.:WAIT1.:RET.:WAIT1.
+Line11=:RET.:WAIT1.:RET.
+Auto=0
